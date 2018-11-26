@@ -1,5 +1,7 @@
-﻿@model IEnumerable<RNTAProjet.Models.Department>
+﻿@model IPagedList<RNTAProjet.Models.Department>
 
+@using PagedList.Mvc;
+@using PagedList;
 @{
     ViewBag.Title = "Index";
 }
@@ -8,41 +10,44 @@
 
 <p>
     @Html.ActionLink("Create New", "Create")
-</p>
-<p>
-    @using (Html.BeginForm("Index", "EmpSearch", FormMethod.Get))
+    @using (Html.BeginForm("Index", "Departments", FormMethod.Get))
     {
-        <input type="text" name="search" placeholder="Search..."/>
-        <input type="submit" name="submit" value="Search"/>
+        <input type="text" name="search" placeholder="Search ..." />
+        <input type="submit" name="submit" value="search" />
+
     }
 </p>
+
 <table class="table table-striped table-bordered">
     <tr>
         <th>
-            @Html.DisplayNameFor(model => model.DepartmentId)
+            @Html.DisplayNameFor(model => model.First().DepartmentId)
         </th>
         <th>
-            @Html.DisplayNameFor(model => model.DepartmentName)
+            @Html.DisplayNameFor(model => model.First().DepartmentName)
         </th>
         <th>
             @Html.Label("Manage")
         </th>
     </tr>
 
-@foreach (var item in Model) {
-    <tr>
-        <td>
-            @Html.DisplayFor(modelItem => item.DepartmentId)
-        </td>
-        <td>
-            @Html.DisplayFor(modelItem => item.DepartmentName)
-        </td>
-        <td>
-            @Html.ActionLink("Edit", "Edit", new { id = item.DepartmentId }) |
-            @Html.ActionLink("Details", "Details", new { id = item.DepartmentId }) |
-            @Html.ActionLink("Delete", "Delete", new { id = item.DepartmentId })
-        </td>
-    </tr>
-}
+    @foreach (var item in Model)
+    {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.DepartmentId)
+            </td>
+            <td>
+                @Html.DisplayFor(modelItem => item.DepartmentName)
+            </td>
+            <td>
+                @Html.ActionLink("Edit", "Edit", new { id = item.DepartmentId }) |
+                @Html.ActionLink("Details", "Details", new { id = item.DepartmentId }) |
+                @Html.ActionLink("Delete", "Delete", new { id = item.DepartmentId })
+            </td>
+        </tr>
+    }
 
 </table>
+
+@Html.PagedListPager(Model,i=>Url.Action("Index","Departments", new {i, search=Request.QueryString["search"]}))

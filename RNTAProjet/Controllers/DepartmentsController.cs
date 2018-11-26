@@ -6,6 +6,7 @@ using System.Linq;
 using System.Net;
 using System.Web;
 using System.Web.Mvc;
+using PagedList.Mvc;
 using PagedList;
 using RNTAProjet.Models;
 
@@ -16,17 +17,19 @@ namespace RNTAProjet.Controllers
         private BDEntities db = new BDEntities();
 
         // GET: Departments
-        public ActionResult Index()
+        public ActionResult Index(string search, int? i)
         {
-            return View(db.Department.ToList());
+            List<Department> ListDepts = db.Department.ToList();
+            return View(db.Department.Where(x => x.DepartmentName.Contains(search) || search == null).ToList().ToPagedList(i ?? 1, 3));
         }
 
-        // GET: Departments
-        public ActionResult EmpSearch(string search, int? i)
+        public ActionResult EmpSearch(string search, int? i )
         {
-            List<Department> listDepts = db.Department.ToList();
-            return View(db.Department.Where(x=>x.DepartmentName.StartsWith(search)|| search ==null).ToList());
+            List<Department> ListDepts = db.Department.ToList();
+            return View(db.Department.Where(x=>x.DepartmentName.Contains(search)||search==null).ToList().ToPagedList(i ?? 1,3));
         }
+
+       
 
 
 
