@@ -18,6 +18,12 @@
     }
 </p>
 
+
+@Html.ActionLink("ExportToExcel", "ExportToExcel")
+@Html.ActionLink("ExportToWord", "ExportToWord")
+
+
+
 <table class="table table-striped table-bordered">
     <tr>
         <th>
@@ -50,4 +56,4 @@
 
 </table>
 
-@Html.PagedListPager(Model,i=>Url.Action("Index","Departments", new {i, search=Request.QueryString["search"]}))
+@Html.PagedListPager(Model, i => Url.Action("Index", "Departments", new { i, search = Request.QueryString["search"] }))

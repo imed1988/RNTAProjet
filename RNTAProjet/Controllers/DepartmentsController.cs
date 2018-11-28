@@ -9,6 +9,9 @@ using System.Web.Mvc;
 using PagedList.Mvc;
 using PagedList;
 using RNTAProjet.Models;
+using System.Web.UI.WebControls;
+using System.IO;
+using System.Web.UI;
 
 namespace RNTAProjet.Controllers
 {
@@ -23,13 +26,7 @@ namespace RNTAProjet.Controllers
             return View(db.Department.Where(x => x.DepartmentName.Contains(search) || search == null).ToList().ToPagedList(i ?? 1, 3));
         }
 
-        public ActionResult EmpSearch(string search, int? i )
-        {
-            List<Department> ListDepts = db.Department.ToList();
-            return View(db.Department.Where(x=>x.DepartmentName.Contains(search)||search==null).ToList().ToPagedList(i ?? 1,3));
-        }
 
-       
 
 
 
@@ -137,5 +134,74 @@ namespace RNTAProjet.Controllers
             }
             base.Dispose(disposing);
         }
+
+        public ActionResult ExportToExcel()
+        {
+
+            //get data from db
+            var data = db.Department.ToList();
+            GridView grid = new GridView();
+            //assign data to gridview
+            grid.DataSource = data;
+            //bind data
+            grid.DataBind();
+            Response.ClearContent();
+            Response.Buffer = true;
+            //Adding name to excel file
+            Response.AddHeader("content-disposition", "attachment;filename=Department.xls");
+            //specify content type of file
+            //Here i specified "ms-excel" format
+            //you can also specify it "ms-word" to get word document
+            Response.ContentType = "application/ms-excel";
+            Response.Charset = "";
+            using (StringWriter sw = new StringWriter())
+            {
+                using (HtmlTextWriter htwriter = new HtmlTextWriter(sw))
+                {
+                    grid.RenderControl(htwriter);
+                    Response.Output.Write(sw.ToString());
+                    Response.Flush();
+                    Response.Close();
+                }
+            }
+            return RedirectToActionPermanent("Index");
+        }
+
+
+        public ActionResult ExportToWord()
+        {
+
+            //get data from db
+            var data = db.Department.ToList();
+            GridView grid = new GridView();
+            //assign data to gridview
+            grid.DataSource = data;
+            //bind data
+            grid.DataBind();
+            Response.ClearContent();
+            Response.Buffer = true;
+            //Adding name to excel file
+            Response.AddHeader("content-disposition", "attachment;filename=Department.doc");
+            //specify content type of file
+            //Here i specified "ms-excel" format
+            //you can also specify it "ms-word" to get word document
+            Response.ContentType = "application/ms-word";
+            Response.Charset = "";
+            using (StringWriter sw = new StringWriter())
+            {
+                using (HtmlTextWriter htwriter = new HtmlTextWriter(sw))
+                {
+                    grid.RenderControl(htwriter);
+                    Response.Output.Write(sw.ToString());
+                    Response.Flush();
+                    Response.Close();
+                }
+            }
+            return RedirectToActionPermanent("Index");
+        }
+
+       
+
     }
-}
+}    
+
