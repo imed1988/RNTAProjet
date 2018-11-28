@@ -10,7 +10,9 @@
 
 <p>
     @Html.ActionLink("Create New", "Create")
-    @Html.ActionLink("Export to PDF", "Export")
+    @Html.ActionLink("Export to Excel", "ExportToExcel")
+    @Html.ActionLink("Export to Word", "ExportToWord")
+
 
 
 
@@ -55,20 +57,8 @@
         }
 
     </table>
-    </div>
+</div>
 
-    @Html.PagedListPager(Model, i => Url.Action("Index", "Departments", new { i, search = Request.QueryString["search"] }))
+@Html.PagedListPager(Model, i => Url.Action("Index", "Departments", new { i, search = Request.QueryString["search"] }))
 
-    @using (Html.BeginForm("Export", "Departments", FormMethod.Post))
-    {
-        <input type="hidden" name="GridHtml" />
-        <input type="submit" id="btnSubmit" value="Export to PDF" />
-    }
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.8.3/jquery.min.js"></script>
-    <script type="text/javascript">
-        $(function () {
-            $("#btnSubmit").click(function () {
-                $("input[name='GridHtml']").val($("#Grid").html());
-            });
-        });
-    </script>
+

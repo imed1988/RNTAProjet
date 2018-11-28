@@ -12,6 +12,8 @@ using RNTAProjet.Models;
 using System.Web.UI.WebControls;
 using System.IO;
 using System.Web.UI;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
 
 namespace RNTAProjet.Controllers
 {
@@ -201,6 +203,7 @@ namespace RNTAProjet.Controllers
         }
 
        
+
 
     }
 }    
