@@ -9,6 +9,11 @@ using System.Web.Mvc;
 using PagedList.Mvc;
 using PagedList;
 using RNTAProjet.Models;
+using Rotativa;
+using System.IO;
+using iTextSharp.text;
+using iTextSharp.text.pdf;
+using iTextSharp.tool.xml;
 
 namespace RNTAProjet.Controllers
 {
@@ -28,11 +33,6 @@ namespace RNTAProjet.Controllers
             List<Department> ListDepts = db.Department.ToList();
             return View(db.Department.Where(x=>x.DepartmentName.Contains(search)||search==null).ToList().ToPagedList(i ?? 1,3));
         }
-
-       
-
-
-
 
         // GET: Departments/Details/5
         public ActionResult Details(int? id)
@@ -136,6 +136,22 @@ namespace RNTAProjet.Controllers
                 db.Dispose();
             }
             base.Dispose(disposing);
+        }
+
+        [HttpPost]
+        [ValidateInput(false)]
+        public FileResult Export(string GridHtml)
+        {
+            using (MemoryStream stream = new System.IO.MemoryStream())
+            {
+                StringReader sr = new StringReader(GridHtml);
+                Document pdfDoc = new Document(PageSize.A4, 10f, 10f, 100f, 0f);
+                PdfWriter writer = PdfWriter.GetInstance(pdfDoc, stream);
+                pdfDoc.Open();
+                XMLWorkerHelper.GetInstance().ParseXHtml(writer, pdfDoc, sr);
+                pdfDoc.Close();
+                return File(stream.ToArray(), "application/pdf", "Grid.pdf");
+            }
         }
     }
 }
