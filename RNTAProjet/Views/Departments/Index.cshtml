@@ -10,18 +10,21 @@
 
 <p>
     @Html.ActionLink("Create New", "Create")
-    @Html.ActionLink("Export to Excel", "ExportToExcel")
-    @Html.ActionLink("Export to Word", "ExportToWord")
 
 
 
+        @Html.ActionLink("Export To PDF", "Reports", new { ReportType = "PDF" })
+        @Html.ActionLink("Export To Word", "Reports", new { ReportType = "Word" })
+        @Html.ActionLink("Export To Excel", "Reports", new { ReportType = "Excel" })
 
-    @using (Html.BeginForm("Index", "Departments", FormMethod.Get))
-    {
-        <input type="text" name="search" placeholder="Search ..." />
-        <input type="submit" name="submit" value="search" />
 
-    }
+
+        @using (Html.BeginForm("Index", "Departments", FormMethod.Get))
+        {
+            <input type="text" name="search" placeholder="Search ..." />
+            <input type="submit" name="submit" value="search" />
+
+        }
 </p>
 <div id="Grid">
     <table class="table table-striped table-bordered">

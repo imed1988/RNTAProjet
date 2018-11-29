@@ -14,6 +14,7 @@ using System.IO;
 using System.Web.UI;
 using iTextSharp.text;
 using iTextSharp.text.pdf;
+using Microsoft.Reporting.WebForms;
 
 namespace RNTAProjet.Controllers
 {
@@ -137,70 +138,48 @@ namespace RNTAProjet.Controllers
             base.Dispose(disposing);
         }
 
-        public ActionResult ExportToExcel()
-        {
+        
 
-            //get data from db
-            var data = db.Department.ToList();
-            GridView grid = new GridView();
-            //assign data to gridview
-            grid.DataSource = data;
-            //bind data
-            grid.DataBind();
-            Response.ClearContent();
-            Response.Buffer = true;
-            //Adding name to excel file
-            Response.AddHeader("content-disposition", "attachment;filename=Department.xls");
-            //specify content type of file
-            //Here i specified "ms-excel" format
-            //you can also specify it "ms-word" to get word document
-            Response.ContentType = "application/ms-excel";
-            Response.Charset = "";
-            using (StringWriter sw = new StringWriter())
+        public ActionResult Reports (string ReportType)
+        {
+            LocalReport localReport = new LocalReport();
+            localReport.ReportPath = Server.MapPath("~/Reports/DepartmentReport.rdlc");
+            ReportDataSource rds = new ReportDataSource();
+            rds.Name = "DataSet1";
+            rds.Value = db.Department.ToList();
+            localReport.DataSources.Add(rds);
+            string reportType = ReportType;
+            string mimeType;
+            string encoding;
+            string fileNameExtension;
+            if (reportType == "Excel")
             {
-                using (HtmlTextWriter htwriter = new HtmlTextWriter(sw))
-                {
-                    grid.RenderControl(htwriter);
-                    Response.Output.Write(sw.ToString());
-                    Response.Flush();
-                    Response.Close();
-                }
+                fileNameExtension = "xlsx";
             }
-            return RedirectToActionPermanent("Index");
+
+            else if (reportType == "Word")
+            {
+                fileNameExtension = "docx";
+            }
+
+            else if (reportType == "PDF")
+            {
+                fileNameExtension = "pdf";
+            }
+            else
+            {
+                fileNameExtension = "jpg";
+            }
+
+            string[] streams;
+            Warning[] warnings;
+            byte[] renderedByte;
+            renderedByte = localReport.Render(reportType,"", out mimeType, out encoding, out fileNameExtension, out streams, out warnings);
+            Response.AddHeader("content-disposition", "attachment;filename=department_report."+fileNameExtension);
+            return File(renderedByte, fileNameExtension);
+
         }
 
-
-        public ActionResult ExportToWord()
-        {
-
-            //get data from db
-            var data = db.Department.ToList();
-            GridView grid = new GridView();
-            //assign data to gridview
-            grid.DataSource = data;
-            //bind data
-            grid.DataBind();
-            Response.ClearContent();
-            Response.Buffer = true;
-            //Adding name to excel file
-            Response.AddHeader("content-disposition", "attachment;filename=Department.doc");
-            //specify content type of file
-            //Here i specified "ms-excel" format
-            //you can also specify it "ms-word" to get word document
-            Response.ContentType = "application/ms-word";
-            Response.Charset = "";
-            using (StringWriter sw = new StringWriter())
-            {
-                using (HtmlTextWriter htwriter = new HtmlTextWriter(sw))
-                {
-                    grid.RenderControl(htwriter);
-                    Response.Output.Write(sw.ToString());
-                    Response.Flush();
-                    Response.Close();
-                }
-            }
-            return RedirectToActionPermanent("Index");
-        }
 
        
 
